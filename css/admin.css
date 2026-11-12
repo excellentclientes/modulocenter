@@ -1,0 +1,73 @@
+/* Módulo Center — estilos do modo de edição (carregado só com ?edit=1) */
+body.editing { padding-top: 48px; }
+body.editing .top { top: 48px; }
+body.editing .wa { display: none; }
+body.editing img.broken { display: block; aspect-ratio: 1; background: var(--surface); border: 2px dashed #4a4a52; }
+
+.ed-bar { position: fixed; z-index: 200; top: 0; left: 0; right: 0; height: 48px; display: flex; align-items: center; gap: 8px; padding: 0 12px; background: var(--red); color: #fff; box-shadow: 0 2px 14px rgba(0,0,0,.5); overflow-x: auto; white-space: nowrap; font-size: .9rem; }
+.ed-bar strong { font-family: var(--font-display); letter-spacing: .06em; text-transform: uppercase; font-size: 1.05rem; }
+.ed-sp { flex: 1; }
+.ed-status { background: rgba(0,0,0,.25); border-radius: 999px; padding: 3px 10px; font-size: .78rem; }
+.ed-status.warn { background: #fff; color: #7a0a17; }
+.ed-btn { font: 600 .85rem var(--font-body); color: #fff; background: rgba(0,0,0,.28); border: 1px solid rgba(255,255,255,.25); border-radius: 6px; padding: 7px 12px; cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; transition: background .15s; }
+.ed-btn:hover { background: rgba(0,0,0,.45); }
+.ed-btn.primary { background: #fff; color: #7a0a17; border-color: #fff; }
+.ed-btn.primary:hover { background: #ffe9ec; }
+.ed-btn.ghost { background: transparent; }
+.ed-btn.danger { background: #3a0b12; border-color: #7a0a17; }
+.ed-btn:disabled { opacity: .5; cursor: wait; }
+
+.ed-hint { position: fixed; z-index: 150; bottom: 14px; left: 50%; transform: translateX(-50%); background: rgba(18,18,20,.94); border: 1px solid var(--line); color: var(--muted); font-size: .8rem; padding: 8px 14px; border-radius: 999px; pointer-events: none; max-width: calc(100vw - 24px); text-align: center; }
+
+/* texto editável */
+body.editing [data-edit] { outline: 1.5px dashed transparent; outline-offset: 3px; cursor: text; transition: outline-color .15s, background .15s; border-radius: 3px; }
+body.editing [data-edit]:hover { outline-color: rgba(255,74,90,.7); }
+body.editing [data-edit]:focus { outline: 2px solid var(--red-hi); background: rgba(255,74,90,.08); }
+body.editing a { cursor: pointer; }
+
+/* imagens */
+body.editing [data-img] { cursor: pointer; outline: 1.5px dashed transparent; outline-offset: 4px; transition: outline-color .15s; }
+body.editing [data-img]:hover { outline-color: var(--red-hi); }
+
+/* cards clicáveis */
+body.editing .card, body.editing .rev { cursor: pointer; }
+body.editing .card:not(.add)::after, body.editing .rev:not(.add)::after { content: "✎ Editar"; position: absolute; top: 10px; right: 10px; background: var(--red); color: #fff; font: 600 .72rem var(--font-body); padding: 4px 9px; border-radius: 999px; opacity: 0; transition: opacity .15s; }
+body.editing .rev { position: relative; }
+body.editing .card:hover::after, body.editing .rev:hover::after { opacity: 1; }
+body.editing .card .btn { pointer-events: none; }
+.card.add, .rev.add { background: transparent; border: 2px dashed #4a4a52; min-height: 180px; align-items: center; justify-content: center; }
+.card.add:hover, .rev.add:hover { border-color: var(--red-hi); transform: none; box-shadow: none; }
+.add-inner { display: flex; flex-direction: column; align-items: center; gap: 6px; color: var(--muted); font-family: var(--font-display); text-transform: uppercase; letter-spacing: .05em; padding: 24px; }
+.add-inner span { font-size: 2.2rem; line-height: 1; color: var(--red-hi); }
+
+/* avaliações em grade no modo de edição */
+body.editing .marquee { -webkit-mask-image: none; mask-image: none; overflow: visible; margin-inline: 0; }
+body.editing .track { animation: none; width: auto; flex-wrap: wrap; }
+
+/* modal */
+.ed-ov { position: fixed; inset: 0; z-index: 300; background: rgba(0,0,0,.7); display: grid; place-items: center; padding: 16px; overflow-y: auto; }
+.ed-modal { width: min(560px, 100%); max-height: calc(100vh - 32px); overflow-y: auto; background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 22px; box-shadow: 0 30px 80px rgba(0,0,0,.6); }
+.ed-modal h3 { font-family: var(--font-display); font-size: 1.6rem; text-transform: uppercase; letter-spacing: .03em; margin-bottom: 14px; }
+.ed-form { display: grid; gap: 12px; }
+.ed-field { display: grid; gap: 5px; }
+.ed-field > span { font-size: .8rem; color: var(--muted); font-weight: 600; }
+.ed-field small, .ed-photo small { color: #75757c; font-size: .75rem; }
+.ed-modal input[type="text"], .ed-modal input[type="tel"], .ed-modal input[type="number"], .ed-modal textarea { width: 100%; background: var(--bg); color: var(--fg); border: 1.5px solid var(--line); border-radius: 6px; padding: 10px 12px; font: 500 .95rem var(--font-body); }
+.ed-modal input:focus, .ed-modal textarea:focus { outline: none; border-color: var(--red); }
+.ed-note { color: var(--muted); font-size: .88rem; }
+.ed-photo { display: grid; grid-template-columns: 120px 1fr; gap: 14px; align-items: center; }
+.ed-photo > div { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.ed-prev { width: 120px; height: 90px; object-fit: contain; background: var(--bg); border: 1px solid var(--line); border-radius: 8px; display: none; }
+.ed-photo:has(.ed-prev[style*="none"]) { grid-template-columns: 1fr; }
+.ed-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 18px; justify-content: flex-end; }
+.ed-modal .ed-btn { background: #26262b; border-color: #3a3a41; }
+.ed-modal .ed-btn.primary { background: var(--red); border-color: var(--red); color: #fff; }
+.ed-modal .ed-btn.danger { background: transparent; color: #ff6b7a; border-color: #7a0a17; margin-right: auto; }
+.ed-modal .ed-btn.ghost { background: transparent; }
+
+.ed-toast { position: fixed; z-index: 400; bottom: 60px; left: 50%; transform: translateX(-50%); background: #fff; color: #111; padding: 10px 16px; border-radius: 8px; font-size: .9rem; font-weight: 600; box-shadow: 0 10px 30px rgba(0,0,0,.5); max-width: calc(100vw - 24px); }
+
+@media (max-width: 640px) {
+  .ed-bar strong { display: none; }
+  .ed-hint { display: none; }
+}
