@@ -10,8 +10,14 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Barlow:wght@400;500;600&family=JetBrains+Mono:wght@500&display=swap">
 <link rel="stylesheet" href="css/style.css">
 <link rel="stylesheet" href="css/admin-login.css">
+<link rel="stylesheet" href="css/effects.css">
 <script>
   // Mantém o endereço sempre limpo (sem #, ?, nem index.html).
+  // Ao recarregar, a página sempre começa no topo.
+  try { history.scrollRestoration = "manual"; } catch (e) {}
+  window.scrollTo(0, 0);
+  addEventListener("load", function(){ scrollTo(0, 0); });
+  addEventListener("pageshow", function(){ scrollTo(0, 0); });
   (function(){ if (location.hash || location.search || /index\.html$/.test(location.pathname)) history.replaceState(null, "", location.pathname.replace(/index\.html$/, "")); })();
 </script>
 </head>
@@ -137,6 +143,7 @@
 </a>
 
 <script type="module" src="js/site.js"></script>
+<script type="module" src="js/effects.js"></script>
 <script type="module" src="js/admin-login.js"></script>
 </body>
 </html>
