@@ -28,19 +28,14 @@ body.lg-open { overflow: hidden; }
 .lg-eyebrow { margin-top: 20px; font-family: var(--font-mono); font-size: .72rem; letter-spacing: .22em; text-transform: uppercase; color: var(--red-hi); }
 .lg-card h2 { margin-top: 6px; font-family: var(--font-display); font-weight: 800; font-size: 2.4rem; line-height: 1; text-transform: uppercase; letter-spacing: .02em; }
 .lg-sub { margin-top: 8px; color: var(--muted); font-size: .92rem; }
-.lg-card label { display: grid; gap: 7px; margin-top: 18px; font-size: .8rem; font-weight: 600; color: var(--muted); letter-spacing: .02em; }
-.lg-card input { width: 100%; height: 50px; padding: 0 16px; background: var(--bg); color: var(--fg); border: 1.5px solid var(--line); border-radius: 12px; font: 500 1rem var(--font-body); transition: border-color .2s, box-shadow .2s; }
-.lg-card input::placeholder { color: #5a5a62; }
-.lg-card input:focus { outline: none; border-color: var(--red); box-shadow: 0 0 0 4px rgba(217,15,38,.16); }
-.lg-pass { position: relative; display: block; }
-.lg-pass input { padding-right: 84px; }
-.lg-pass button { position: absolute; right: 8px; top: 50%; transform: translateY(-50%); height: 34px; padding: 0 12px; border: 0; border-radius: 8px; background: transparent; color: var(--muted); font: 600 .78rem var(--font-body); cursor: pointer; }
-.lg-pass button:hover { color: var(--fg); background: var(--surface-2); }
-.lg-go { width: 100%; margin-top: 24px; }
-.lg-go:disabled { opacity: .6; cursor: wait; transform: none; }
-.lg-link { display: block; margin: 14px auto 0; background: none; border: 0; color: var(--muted); font: 500 .85rem var(--font-body); cursor: pointer; text-decoration: underline; text-underline-offset: 3px; }
-.lg-link:hover { color: var(--fg); }
-.lg-msg { margin-top: 12px; min-height: 1.3em; text-align: center; font-size: .88rem; color: var(--red-hi); }
+.lg-google { width: 100%; margin-top: 26px; height: 54px; display: inline-flex; align-items: center; justify-content: center; gap: 12px; position: relative; overflow: hidden; background: #fff; color: #1f1f23; border: 0; border-radius: 14px; font: 600 1rem var(--font-body); cursor: pointer; box-shadow: 0 8px 24px -8px rgba(0,0,0,.6); transition: transform .25s cubic-bezier(.2,.7,.2,1), box-shadow .25s, background .2s; }
+.lg-google svg { width: 22px; height: 22px; flex: none; }
+.lg-google::after { content: ""; position: absolute; top: -10%; bottom: -10%; left: 0; width: 45%; background: linear-gradient(105deg, transparent, rgba(217,15,38,.22), transparent); transform: translateX(-180%) skewX(-20deg); transition: transform .8s cubic-bezier(.3,.6,.3,1); pointer-events: none; }
+.lg-google:hover { transform: translateY(-2px); box-shadow: 0 14px 30px -10px rgba(217,15,38,.5); }
+.lg-google:hover::after { transform: translateX(420%) skewX(-20deg); }
+.lg-google:active { transform: scale(.98); }
+.lg-google:disabled { opacity: .7; cursor: wait; transform: none; }
+.lg-msg { margin-top: 16px; min-height: 1.3em; text-align: center; font-size: .88rem; color: var(--red-hi); }
 .lg-msg.ok { color: #6fe39b; }
 @keyframes lgFade { from { opacity: 0; } to { opacity: 1; } }
 @keyframes lgUp { from { opacity: 0; transform: translateY(14px) scale(.98); } to { opacity: 1; transform: none; } }

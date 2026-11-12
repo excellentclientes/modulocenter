@@ -1,0 +1,61 @@
+/* ===== Animações do site ===== */
+
+/* entrada ao rolar */
+.rv:not(.in) { opacity: 0; }
+.rv.in { animation: rvIn .85s cubic-bezier(.2,.7,.2,1) var(--d, 0s) backwards; }
+@keyframes rvIn { from { opacity: 0; transform: translateY(36px) scale(.985); } to { opacity: 1; transform: none; } }
+
+/* cabeçalho entra de cima ao carregar */
+.top .wrap { animation: dropIn .7s cubic-bezier(.2,.7,.2,1) backwards; }
+@keyframes dropIn { from { opacity: 0; transform: translateY(-24px); } to { opacity: 1; transform: none; } }
+
+/* logo do topo flutuando de leve */
+.logo-hero img { animation: floaty 6s ease-in-out infinite; }
+@keyframes floaty { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+
+/* barra de progresso da rolagem */
+.sp { position: fixed; top: 0; left: 0; right: 0; height: 3px; z-index: 80; background: linear-gradient(90deg, var(--red), var(--red-hi)); transform-origin: 0 50%; transform: scaleX(0); pointer-events: none; box-shadow: 0 0 12px rgba(217,15,38,.6); }
+
+/* ===== Brilho / reflexo ===== */
+.card, .tile, .rev { position: relative; overflow: hidden; }
+.card::after, .tile::after, .rev::after {
+  content: ""; position: absolute; top: -20%; bottom: -20%; left: 0; width: 55%; z-index: 4; pointer-events: none;
+  background: linear-gradient(105deg, transparent 0%, rgba(255,255,255,.05) 35%, rgba(255,255,255,.2) 50%, rgba(255,255,255,.05) 65%, transparent 100%);
+  transform: translateX(-160%) skewX(-18deg);
+  transition: transform 1s cubic-bezier(.3,.6,.3,1);
+}
+.card:hover::after, .tile:hover::after, .rev:hover::after { transform: translateX(300%) skewX(-18deg); }
+.rev { transition: transform .4s cubic-bezier(.2,.7,.2,1), border-color .3s, box-shadow .4s; }
+.rev:hover { transform: translateY(-5px); border-color: rgba(217,15,38,.5); box-shadow: 0 18px 40px -14px var(--glow); }
+
+/* botões */
+.btn { position: relative; overflow: hidden; isolation: isolate; }
+.btn::after {
+  content: ""; position: absolute; top: -10%; bottom: -10%; left: 0; width: 50%; z-index: 1; pointer-events: none;
+  background: linear-gradient(105deg, transparent 0%, rgba(255,255,255,.38) 50%, transparent 100%);
+  transform: translateX(-180%) skewX(-20deg);
+  transition: transform .8s cubic-bezier(.3,.6,.3,1);
+}
+.btn-line::after { background: linear-gradient(105deg, transparent 0%, rgba(255,255,255,.2) 50%, transparent 100%); }
+.btn:hover::after { transform: translateX(380%) skewX(-20deg); }
+.btn:active { transform: scale(.97); }
+.chip, .cats button { transition: border-color .2s, color .2s, background .2s, transform .25s cubic-bezier(.2,.7,.2,1); }
+.chip:hover, .cats button:hover { transform: translateY(-2px); }
+
+/* pilares e motivos */
+.pillar { transition: transform .4s cubic-bezier(.2,.7,.2,1), border-color .3s; }
+.pillar:hover { transform: translateY(-6px); border-top-color: var(--red-hi); }
+.reasons li { transition: padding-left .35s cubic-bezier(.2,.7,.2,1), background .3s; }
+.reasons li::before { transition: width .35s cubic-bezier(.2,.7,.2,1); }
+.reasons li:hover { padding-left: 34px; }
+.reasons li:hover::before { width: 22px; }
+
+/* logo do rodapé / ícone do whatsapp */
+.logo-hero img { transition: filter .4s; }
+.logo-hero img:hover { filter: drop-shadow(0 0 26px rgba(217,15,38,.45)); }
+
+@media (prefers-reduced-motion: reduce) {
+  .rv:not(.in) { opacity: 1; }
+  .rv.in, .top .wrap, .logo-hero img { animation: none; }
+  .card::after, .tile::after, .rev::after, .btn::after, .sp { display: none; }
+}
