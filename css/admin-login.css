@@ -1,7 +1,20 @@
 /* Botão Administrador + modal de login */
 #adminBtn { color: var(--muted); border-color: var(--line); }
 #adminBtn:hover { color: var(--fg); border-color: #4a4a52; background: var(--surface); }
-@media (max-width: 760px) { .nav { gap: 10px; } }
+
+/* Menu colado na lateral direita: Orçamento + Administrador juntos, quase encostados na borda */
+.top { padding-right: max(6px, env(safe-area-inset-right, 0px)); }
+.top .wrap { max-width: none; padding-left: max(0px, calc((100% - 1180px) / 2 - 5px)); }
+.nav { gap: 22px; }
+.nav .btn-red + #adminBtn { margin-left: -10px; }
+
+@media (max-width: 760px) {
+  .top .wrap { padding-left: 0; gap: 8px; }
+  .nav { gap: 6px; }
+  .nav .btn-red + #adminBtn { margin-left: 0; }
+  .brand { font-size: 1.05rem; letter-spacing: .04em; }
+  .nav .btn-sm { padding: 0 11px; font-size: .8rem; }
+}
 
 body.lg-open { overflow: hidden; }
 .lg-overlay { position: fixed; inset: 0; z-index: 500; display: grid; place-items: center; padding: 20px; background: radial-gradient(circle at 50% 30%, rgba(217,15,38,.16), rgba(0,0,0,.82) 62%); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); animation: lgFade .25s ease; }
