@@ -1,5 +1,5 @@
-// Modo de edição ao vivo. Carregado por site.js quando a URL tem ?edit=1.
-// Só funciona com usuário autenticado; caso contrário redireciona para admin.html.
+// Modo de edição ao vivo. Carregado por admin-login.js depois do login (a URL não muda).
+// Só funciona com usuário autenticado; caso contrário volta ao site.
 import { auth, db, storage } from "./firebase-config.js";
 import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
 import { doc, collection, setDoc, deleteDoc, writeBatch, deleteField } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
@@ -98,7 +98,7 @@ async function deleteStoredImage(url) {
 /* ---------- painel ---------- */
 export function initAdmin(store) {
   onAuthStateChanged(auth, (user) => {
-    if (!user) { location.replace("admin.html"); return; }
+    if (!user) { location.reload(); return; }
     start(store, user);
   });
 }
@@ -123,8 +123,8 @@ function start(store, user) {
     btn("＋ Módulo", "", () => openProduct(null)),
     btn("＋ Avaliação", "", () => openReview(null)),
     btn("Configurações", "", () => openSettings()),
-    h("a", { class: "ed-btn", href: "index.html" }, "Ver site"),
-    btn("Sair", "", () => signOut(auth).then(() => location.replace("admin.html"))),
+    btn("Ver site", "", () => location.reload()),
+    btn("Sair", "", () => signOut(auth).then(() => location.reload())),
   );
   bar.setAttribute("title", user.email || "");
   document.body.prepend(bar);

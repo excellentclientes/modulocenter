@@ -1,5 +1,5 @@
 // Site público: lê tudo do Firestore em tempo real (com fallback para os dados padrão).
-// Com ?edit=1 carrega o painel de edição (admin.js).
+// O painel de edição (admin.js) é carregado por admin-login.js após o login.
 import { db } from "./firebase-config.js";
 import { doc, collection, onSnapshot, query, orderBy } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
 import { PRODUCTS as DEF_PRODUCTS, REVIEWS as DEF_REVIEWS, SHOW, WA_PATH, BASE_CATS, DEFAULT_CONTACT } from "./defaults.js";
@@ -11,7 +11,7 @@ const $$ = (s, r = document) => [...r.querySelectorAll(s)];
 const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 
 export const store = {
-  editing: new URLSearchParams(location.search).get("edit") === "1",
+  editing: false,          // ativado por admin-login.js após o login
   content: { texts: {}, images: {}, seeded: false, whatsapp: DEFAULT_CONTACT.whatsapp, phoneDisplay: DEFAULT_CONTACT.phoneDisplay },
   pending: {},          // textos editados ainda não salvos (preservados quando chega um snapshot)
   products: [],
@@ -149,7 +149,7 @@ function renderAll() {
 }
 
 let queued = false;
-function schedule() {
+export function schedule() {
   if (queued) return;
   queued = true;
   requestAnimationFrame(() => { queued = false; renderAll(); });
@@ -200,6 +200,13 @@ $("#copyPhone").addEventListener("click", function () {
 
 renderAll();
 
-if (store.editing) {
-  import("./admin.js").then((m) => m.initAdmin(store)).catch((e) => console.error("Falha ao carregar o painel:", e));
-}
+/* ---------- links internos sem mudar o endereço (sem #) ---------- */
+document.addEventListener("click", (e) => {
+  const a = e.target.closest && e.target.closest('a[href^="#"]');
+  if (!a) return;
+  e.preventDefault();
+  const id = a.getAttribute("href").slice(1);
+  const el = id && id !== "inicio" ? document.getElementById(id) : null;
+  if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+  else window.scrollTo({ top: 0, behavior: "smooth" });
+});
