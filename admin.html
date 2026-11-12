@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>Painel · Módulo Center</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700;800&family=Barlow:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="css/style.css">
+<style>
+  body { min-height: 100vh; display: grid; place-items: center; }
+  .login { width: min(400px, 100%); background: var(--surface); border: 1px solid var(--line); border-radius: 22px; padding: 32px 26px; }
+  .login h1 { font-family: var(--font-display); font-size: 2.2rem; text-transform: uppercase; font-weight: 800; line-height: 1; }
+  .login h1 span { color: var(--red); }
+  .login p.sub { color: var(--muted); margin-top: 8px; font-size: .92rem; }
+  .login label { display: grid; gap: 6px; margin-top: 18px; font-size: .82rem; color: var(--muted); font-weight: 600; }
+  .login input { height: 48px; padding: 0 14px; background: var(--bg); color: var(--fg); border: 1.5px solid var(--line); border-radius: 6px; font: 500 1rem var(--font-body); }
+  .login input:focus { outline: none; border-color: var(--red); }
+  .login .btn { width: 100%; margin-top: 22px; }
+  .login .msg { margin-top: 14px; min-height: 1.3em; font-size: .88rem; color: var(--red-hi); }
+  .login .msg.ok { color: #6fe39b; }
+  .login .link { display: block; margin: 12px auto 0; background: none; border: 0; color: var(--muted); font: 500 .85rem var(--font-body); cursor: pointer; text-decoration: underline; }
+  .login .back { display: block; text-align: center; margin-top: 16px; color: var(--muted); font-size: .85rem; }
+</style>
+</head>
+<body>
+<form class="login" id="form" autocomplete="on">
+  <h1>Módulo <span>Center</span></h1>
+  <p class="sub">Painel de edição do site. Entre para editar os textos, módulos e imagens.</p>
+  <label>E-mail<input id="email" type="email" autocomplete="username" required></label>
+  <label>Senha<input id="pass" type="password" autocomplete="current-password" required></label>
+  <button class="btn btn-red" id="go" type="submit">Entrar</button>
+  <button class="link" id="reset" type="button">Esqueci minha senha</button>
+  <p class="msg" id="msg" role="alert"></p>
+  <a class="back" href="index.html">← Voltar ao site</a>
+</form>
+<script type="module" src="js/login.js"></script>
+</body>
+</html>

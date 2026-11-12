@@ -1,0 +1,15 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Troque pelo UID do seu usuário (Firebase Console > Authentication > Usuários).
+    function isAdmin() {
+      return request.auth != null && request.auth.uid in ["COLE_AQUI_O_SEU_UID"];
+    }
+
+    // Qualquer visitante pode LER o site; só o administrador pode ESCREVER.
+    match /site/{doc}       { allow read: if true; allow write: if isAdmin(); }
+    match /produtos/{id}    { allow read: if true; allow write: if isAdmin(); }
+    match /avaliacoes/{id}  { allow read: if true; allow write: if isAdmin(); }
+  }
+}

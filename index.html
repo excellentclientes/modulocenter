@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Módulo Center</title>
+<meta name="description" content="Módulos automotivos com qualidade, confiança e procedência: ABS, injeção, airbag, carroceria, câmbio e direção elétrica.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Barlow:wght@400;500;600&family=JetBrains+Mono:wght@500&display=swap">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <defs>
+    <linearGradient id="mcBody" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#3a3a40"/><stop offset="1" stop-color="#1b1b1f"/></linearGradient>
+    <linearGradient id="mcMetal" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#9a9aa2"/><stop offset=".5" stop-color="#6c6c74"/><stop offset="1" stop-color="#4a4a51"/></linearGradient>
+    <linearGradient id="mcConn" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#26262b"/><stop offset="1" stop-color="#0f0f12"/></linearGradient>
+  </defs>
+</svg>
+
+<header class="top">
+  <div class="wrap">
+    <a class="brand" href="#inicio" aria-label="Módulo Center, início"><span data-edit="brand_1">Módulo</span> <b data-edit="brand_2">Center</b></a>
+    <nav class="nav" aria-label="Principal">
+      <a href="#produtos" data-edit="nav_produtos">Produtos</a>
+      <a href="#sobre" data-edit="nav_sobre">Por que nós</a>
+      <a href="#avaliacoes" data-edit="nav_aval">Avaliações</a>
+      <a href="#contato" data-edit="nav_contato">Contato</a>
+      <a class="btn btn-red btn-sm" href="#contato" data-wa="Olá! Vim pelo site da Módulo Center e gostaria de um orçamento."><span data-edit="nav_orc">Orçamento</span></a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <section class="hero wrap" id="inicio">
+    <div class="hero-wrap">
+      <div class="hero-text">
+        <p class="eyebrow" data-edit="hero_eyebrow">ABS · Injeção · Airbag · Carroceria · Câmbio · Direção</p>
+        <h1><span data-edit="hero_t1">Módulo</span> <span class="red" data-edit="hero_t2">Center</span></h1>
+        <p class="lead" data-edit="hero_lead">Uma das melhores empresas do ramo de módulos automotivos. Trabalhamos com qualidade, confiança e produtos de procedência, para você comprar com segurança.</p>
+        <div class="cta">
+          <a class="btn btn-red" href="#produtos"><span data-edit="hero_cta1">Ver produtos</span></a>
+          <a class="btn btn-line" data-wa="Olá! Vim pelo site da Módulo Center e gostaria de um orçamento." href="#contato"><span data-edit="hero_cta2">Pedir orçamento</span></a>
+        </div>
+      </div>
+      <div class="logo-hero"><img class="logo-img" data-img="logo" data-def="img/logo.jpg" src="img/logo.jpg" alt="Módulo Center, autopeças eletrônicas" width="560" height="516"></div>
+    </div>
+    <div class="showcase" id="showcase" aria-label="Alguns dos módulos que trabalhamos"></div>
+  </section>
+
+  <section class="intro wrap" id="apresentacao">
+    <p class="eyebrow" data-edit="intro_eyebrow">Quem somos</p>
+    <h2 class="big" style="margin-top:14px"><span data-edit="intro_t1">Qualidade que você</span> <em data-edit="intro_t2">vê</em>, <span data-edit="intro_t3">confiança que você</span> <em data-edit="intro_t4">sente</em>.</h2>
+    <div class="pillars">
+      <div class="pillar"><h3 data-edit="pil1_t">Qualidade</h3><p data-edit="pil1_p">Módulos selecionados e conferidos antes de chegar até você, para o carro voltar a rodar sem retrabalho.</p></div>
+      <div class="pillar"><h3 data-edit="pil2_t">Confiança</h3><p data-edit="pil2_p">Atendimento direto e transparente. Você fala com quem entende do assunto e recebe orientação clara.</p></div>
+      <div class="pillar"><h3 data-edit="pil3_t">Procedência</h3><p data-edit="pil3_p">Trabalhamos apenas com produtos de origem conhecida, com identificação do código e do veículo compatível.</p></div>
+    </div>
+  </section>
+
+  <section class="catalog wrap" id="produtos">
+    <div class="head">
+      <p class="eyebrow" data-edit="cat_eyebrow">Catálogo</p>
+      <h2 data-edit="cat_title">Encontre seu módulo</h2>
+      <p class="sub" data-edit="cat_sub">Busque pelo código da peça, pelo nome ou pelo modelo do veículo. A pesquisa entende acentos, códigos sem traço e pequenos erros de digitação.</p>
+    </div>
+    <div class="search">
+      <label class="sr" for="q">Pesquisar módulo por código, nome ou veículo</label>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5 21 21"/></svg>
+      <input id="q" type="search" autocomplete="off" spellcheck="false" placeholder="Código, nome ou veículo. Ex.: MC-ABS-1042, Gol G5, Hilux">
+      <button class="clear" id="clear" type="button" aria-label="Limpar pesquisa" hidden>×</button>
+    </div>
+    <div class="tryrow"><span>Experimente:</span>
+      <button class="chip" type="button" data-q="Gol G5">Gol G5</button>
+      <button class="chip" type="button" data-q="abs 1042">abs 1042</button>
+      <button class="chip" type="button" data-q="Hilux">Hilux</button>
+      <button class="chip" type="button" data-q="injecao">injecao</button>
+    </div>
+    <div class="cats" id="cats" role="group" aria-label="Filtrar por categoria"></div>
+    <p class="count" id="count" aria-live="polite"></p>
+    <div class="grid" id="grid"></div>
+  </section>
+
+  <section class="why wrap" id="sobre">
+    <p class="eyebrow" data-edit="why_eyebrow">Sobre a Módulo Center</p>
+    <h2 data-edit="why_title">Por que comprar com a gente</h2>
+    <div class="cols" style="margin-top:28px">
+      <div class="story">
+        <p style="margin-top:0" data-edit="why_p1">A Módulo Center nasceu para resolver um problema que todo mecânico e todo dono de carro conhece: achar o módulo certo, de procedência, sem dor de cabeça.</p>
+        <p data-edit="why_p2">Trabalhamos com módulos ABS e com diversos outros módulos automotivos, como injeção, airbag, carroceria, câmbio e direção elétrica, para vários modelos e marcas.</p>
+        <p data-edit="why_p3">Cada atendimento começa pelo código da peça e pelo veículo. Assim você recebe exatamente o que precisa, com orientação de quem conhece o produto.</p>
+        <p style="margin-top:28px"><a class="btn btn-red" href="#contato" data-wa="Olá! Quero tirar uma dúvida sobre um módulo."><span data-edit="why_cta">Falar com um especialista</span></a></p>
+      </div>
+      <ul class="reasons">
+        <li><h3 data-edit="r1_t">Procedência garantida</h3><p data-edit="r1_p">Origem conhecida e código identificado em cada módulo.</p></li>
+        <li><h3 data-edit="r2_t">Peça certa para o seu carro</h3><p data-edit="r2_p">Conferimos código, modelo e ano antes de confirmar o pedido.</p></li>
+        <li><h3 data-edit="r3_t">Atendimento de quem entende</h3><p data-edit="r3_p">Tire dúvidas direto no WhatsApp, sem robô e sem enrolação.</p></li>
+        <li><h3 data-edit="r4_t">Garantia nos módulos</h3><p data-edit="r4_p">Compra segura, com suporte depois da entrega.</p></li>
+        <li><h3 data-edit="r5_t">Envio para todo o Brasil</h3><p data-edit="r5_p">Embalagem reforçada para o módulo chegar protegido.</p></li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="reviews wrap" id="avaliacoes">
+    <p class="eyebrow" data-edit="rev_eyebrow">Avaliações</p>
+    <h2 data-edit="rev_title">Quem compra, volta</h2>
+    <div class="marquee" aria-label="Avaliações de clientes"><div class="track" id="track"></div></div>
+  </section>
+
+  <section class="contact wrap" id="contato">
+    <p class="eyebrow" data-edit="contact_eyebrow">Contato</p>
+    <h2 data-edit="contact_title">Peça seu orçamento</h2>
+    <p class="sub" data-edit="contact_sub">Envie o código do módulo ou o modelo e o ano do veículo. Respondemos com valor e disponibilidade.</p>
+    <div class="channels">
+      <a class="btn btn-wa" id="waBtn" href="#contato" target="_blank" rel="noopener"><svg class="wi" viewBox="0 0 24 24" aria-hidden="true"><path class="wa-path"/></svg><span data-edit="contact_btn">Chamar no WhatsApp</span></a>
+    </div>
+  </section>
+
+  <footer class="site wrap">
+    <div class="foot-brand"><img class="logo-img" data-img="logo" data-def="img/logo.jpg" src="img/logo.jpg" alt="Módulo Center" width="56" height="56"><span data-edit="foot_copyright">© 2026 Módulo Center</span></div>
+    <div class="foot-contact"><span class="foot-lab" data-edit="foot_lab">WhatsApp e telefone</span><span class="foot-num" id="phoneNum"></span><button class="foot-copy" id="copyPhone" type="button">Copiar número</button></div>
+    <span class="foot-tag" data-edit="foot_tag">Módulos automotivos com qualidade, confiança e procedência.</span>
+  </footer>
+</main>
+
+<a class="wa" id="waFloat" href="#contato" target="_blank" rel="noopener" aria-label="Falar no WhatsApp">
+  <span class="tip">Fale conosco</span>
+  <svg viewBox="0 0 24 24" aria-hidden="true"><path class="wa-path"/></svg>
+</a>
+
+<script type="module" src="js/site.js"></script>
+</body>
+</html>
