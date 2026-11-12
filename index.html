@@ -9,6 +9,11 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Barlow:wght@400;500;600&family=JetBrains+Mono:wght@500&display=swap">
 <link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/admin-login.css">
+<script>
+  // Mantém o endereço sempre limpo (sem #, ?, nem index.html).
+  (function(){ if (location.hash || location.search || /index\.html$/.test(location.pathname)) history.replaceState(null, "", location.pathname.replace(/index\.html$/, "")); })();
+</script>
 </head>
 <body>
 
@@ -29,6 +34,7 @@
       <a href="#avaliacoes" data-edit="nav_aval">Avaliações</a>
       <a href="#contato" data-edit="nav_contato">Contato</a>
       <a class="btn btn-red btn-sm" href="#contato" data-wa="Olá! Vim pelo site da Módulo Center e gostaria de um orçamento."><span data-edit="nav_orc">Orçamento</span></a>
+      <button class="btn btn-line btn-sm" id="adminBtn" type="button">Administrador</button>
     </nav>
   </div>
 </header>
@@ -131,5 +137,6 @@
 </a>
 
 <script type="module" src="js/site.js"></script>
+<script type="module" src="js/admin-login.js"></script>
 </body>
 </html>
