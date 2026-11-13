@@ -10,14 +10,10 @@ const emailOk = (email) => ADMIN_EMAILS.map(norm).includes(norm(email));
 // Só vale sessão feita pelo Google E com e-mail liberado.
 const userOk = (u) => !!u && emailOk(u.email) && u.providerData.some((p) => p.providerId === "google.com");
 
-const ERR = {
-  "auth/popup-closed-by-user": "Login cancelado. Tente novamente.",
-  "auth/cancelled-popup-request": "Login cancelado. Tente novamente.",
-  "auth/popup-blocked": "O navegador bloqueou a janela do Google. Libere pop-ups para este site e tente de novo.",
-  "auth/network-request-failed": "Sem conexão. Verifique sua internet.",
-  "auth/operation-not-allowed": "O login com Google não está ativado no Firebase (Authentication → Método de login).",
-  "auth/unauthorized-domain": "Domínio não autorizado no Firebase (Authentication → Configurações → Domínios autorizados)."
-};
+const DENIED = "Não autorizado";
+// Se o visitante só fechar a janela do Google, não mostra nada.
+const SILENT = ["auth/popup-closed-by-user", "auth/cancelled-popup-request"];
+
 
 /* ---------- modal ---------- */
 const modal = document.createElement("div");
@@ -84,7 +80,7 @@ $("lgGoogle").addEventListener("click", async () => {
     if (!userOk(cred.user)) {
       await signOut(auth);
       currentUser = null;
-      msg("Essa conta não é a autorizada.");
+      msg(DENIED);
       idle();
       return;
     }
@@ -93,7 +89,7 @@ $("lgGoogle").addEventListener("click", async () => {
     enterEditMode();
   } catch (err) {
     console.error("Login Google:", err.code || err);
-    msg((ERR[err.code] || "Não foi possível entrar.") + " [" + (err.code || err.message) + "]");
+    msg(SILENT.includes(err.code) ? "" : DENIED);
     idle();
   }
 });
