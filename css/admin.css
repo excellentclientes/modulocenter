@@ -28,6 +28,8 @@ body.editing a { cursor: pointer; }
 /* imagens */
 body.editing [data-img] { cursor: pointer; outline: 1.5px dashed transparent; outline-offset: 4px; transition: outline-color .15s; }
 body.editing [data-img]:hover { outline-color: var(--red-hi); }
+body.editing #phoneNum, body.editing #copyPhone { cursor: pointer; outline: 1.5px dashed transparent; outline-offset: 4px; border-radius: 4px; transition: outline-color .15s; }
+body.editing #phoneNum:hover, body.editing #copyPhone:hover { outline-color: var(--red-hi); }
 
 /* cards clicáveis */
 body.editing .card, body.editing .rev { cursor: pointer; }
