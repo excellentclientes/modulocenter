@@ -13,6 +13,7 @@ service cloud.firestore {
     // Qualquer visitante pode LER o site; só o administrador pode ESCREVER.
     match /site/{doc}       { allow read: if true; allow write: if isAdmin(); }
     match /produtos/{id}    { allow read: if true; allow write: if isAdmin(); }
+    match /imagens/{id}     { allow read: if true; allow write: if isAdmin(); }
     match /avaliacoes/{id}  { allow read: if true; allow write: if isAdmin(); }
   }
 }
