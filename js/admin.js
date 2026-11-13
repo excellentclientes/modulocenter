@@ -91,7 +91,6 @@ function start(store, user) {
   );
   bar.setAttribute("title", user.email || "");
   document.body.prepend(bar);
-  document.body.append(h("div", { class: "ed-hint" }, "Clique em qualquer texto para editar · clique em um módulo, avaliação ou imagem para alterar"));
 
   /* ----- salvar textos (autosave) ----- */
   let timer = null, saving = false;
