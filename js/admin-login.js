@@ -16,7 +16,7 @@ const ERR = {
   "auth/popup-blocked": "O navegador bloqueou a janela do Google. Libere pop-ups para este site e tente de novo.",
   "auth/network-request-failed": "Sem conexão. Verifique sua internet.",
   "auth/operation-not-allowed": "O login com Google não está ativado no Firebase (Authentication → Método de login).",
-  "auth/unauthorized-domain": "Acesso não autorizado."
+  "auth/unauthorized-domain": "Domínio não autorizado no Firebase (Authentication → Configurações → Domínios autorizados)."
 };
 
 /* ---------- modal ---------- */
@@ -76,15 +76,15 @@ $("lgGoogle").addEventListener("click", async () => {
   $("lgGoogleTxt").textContent = "Aguardando o Google…";
   try {
     const provider = new GoogleAuthProvider();
-    // já indica ao Google qual conta usar (a liberada), sem depender de escolher na lista
-    provider.setCustomParameters({ login_hint: ADMIN_EMAILS[0] });
+    // sempre mostra a lista de contas (sem indicar nenhum e-mail na janela do Google)
+    provider.setCustomParameters({ prompt: "select_account" });
     // pequena pausa: evita que um toque duplo caia dentro da janela do Google
     await new Promise((r) => setTimeout(r, 500));
     const cred = await signInWithPopup(auth, provider);
     if (!userOk(cred.user)) {
       await signOut(auth);
       currentUser = null;
-      msg("Acesso não autorizado.");
+      msg("Essa conta não é a autorizada.");
       idle();
       return;
     }
@@ -93,7 +93,7 @@ $("lgGoogle").addEventListener("click", async () => {
     enterEditMode();
   } catch (err) {
     console.error("Login Google:", err.code || err);
-    msg(ERR[err.code] || "Não foi possível entrar (" + (err.code || err.message) + ").");
+    msg((ERR[err.code] || "Não foi possível entrar.") + " [" + (err.code || err.message) + "]");
     idle();
   }
 });
