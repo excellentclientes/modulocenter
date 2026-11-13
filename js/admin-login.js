@@ -76,7 +76,8 @@ $("lgGoogle").addEventListener("click", async () => {
   $("lgGoogleTxt").textContent = "Aguardando o Google…";
   try {
     const provider = new GoogleAuthProvider();
-    provider.setCustomParameters({ prompt: "select_account" });
+    // já indica ao Google qual conta usar (a liberada), sem depender de escolher na lista
+    provider.setCustomParameters({ login_hint: ADMIN_EMAILS[0] });
     // pequena pausa: evita que um toque duplo caia dentro da janela do Google
     await new Promise((r) => setTimeout(r, 500));
     const cred = await signInWithPopup(auth, provider);
