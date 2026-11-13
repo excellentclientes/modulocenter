@@ -14,6 +14,8 @@ export const store = {
   editing: false,          // ativado por admin-login.js após o login
   content: { texts: {}, images: {}, seeded: false, whatsapp: DEFAULT_CONTACT.whatsapp, phoneDisplay: DEFAULT_CONTACT.phoneDisplay },
   pending: {},          // textos editados ainda não salvos (preservados quando chega um snapshot)
+  legacyImages: {},     // imagens antigas (campo images do site/content)
+  imgDocs: {},          // imagens em base64 (coleção imagens)
   products: [],
   reviews: [],
   loaded: { content: false, produtos: false, avaliacoes: false },
@@ -69,7 +71,7 @@ function renderImages() {
 let showSig = null;
 function renderShowcase() {
   const imgs = store.content.images || {};
-  const sig = SHOW.map((_, i) => imgs["show_" + i] || "").join("|");
+  const sig = SHOW.map((_, i) => { const v = imgs["show_" + i] || ""; return v.length + ":" + v.slice(-24); }).join("|");
   if (sig === showSig) return;
   showSig = sig;
   $("#showcase").innerHTML = SHOW.map((s, i) => {
@@ -160,14 +162,24 @@ onSnapshot(doc(db, "site", "content"), (snap) => {
   const d = snap.exists() ? snap.data() : {};
   store.content = {
     texts: { ...(d.texts || {}), ...store.pending },
-    images: d.images || {},
+    images: { ...(d.images || {}), ...store.imgDocs },
     seeded: !!d.seeded,
     whatsapp: d.whatsapp || DEFAULT_CONTACT.whatsapp,
     phoneDisplay: d.phoneDisplay || DEFAULT_CONTACT.phoneDisplay
   };
+  store.legacyImages = d.images || {};
   store.loaded.content = true;
   schedule();
 }, (err) => { console.warn("Firestore (site/content):", err); store.error = err; store.loaded.content = true; schedule(); });
+
+// Imagens salvas como texto base64 (uma por documento: logo, destaques…)
+onSnapshot(collection(db, "imagens"), (snap) => {
+  const m = {};
+  snap.docs.forEach((d) => { if (d.data().d) m[d.id] = d.data().d; });
+  store.imgDocs = m;
+  store.content.images = { ...store.legacyImages, ...m };
+  schedule();
+}, (err) => { console.warn("Firestore (imagens):", err); });
 
 onSnapshot(query(collection(db, "produtos"), orderBy("ordem")), (snap) => {
   store.products = snap.docs.map((d) => ({ id: d.id, ...d.data() }));

@@ -1,9 +1,10 @@
 // Modo de edição ao vivo. Carregado por admin-login.js depois do login (a URL não muda).
 // Só funciona com usuário autenticado; caso contrário volta ao site.
-import { auth, db, storage } from "./firebase-config.js";
+import { auth, db } from "./firebase-config.js";
 import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
 import { doc, collection, setDoc, deleteDoc, writeBatch, deleteField } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
-import { ref, uploadBytes, getDownloadURL, deleteObject } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-storage.js";
+import { compressImage, withTimeout, IMG } from "./image-tools.js";
+import { savingPopup } from "./save-popup.js";
 import { PRODUCTS as DEF_PRODUCTS, REVIEWS as DEF_REVIEWS, BASE_CATS } from "./defaults.js";
 
 const contentRef = () => doc(db, "site", "content");
@@ -31,7 +32,7 @@ function toast(msg) {
 }
 function explain(e) {
   if (e && e.code === "permission-denied") return "Sem permissão para salvar. Saia e entre novamente como administrador.";
-  if (e && e.code === "unavailable") return "Sem conexão. Tente novamente.";
+  if (e && (e.code === "unavailable" || e.code === "timeout")) return "Sem conexão estável. Tente novamente.";
   return (e && e.message) || "Erro inesperado.";
 }
 
@@ -56,54 +57,6 @@ function modal(title, content, buttons) {
   return { close, box };
 }
 const field = (label, control, hint) => h("label", { class: "ed-field" }, h("span", {}, label), control, hint ? h("small", {}, hint) : null);
-
-/* ---------- imagens ---------- */
-function loadImage(file) {
-  return new Promise((res, rej) => {
-    const u = URL.createObjectURL(file);
-    const i = new Image();
-    i.onload = () => { URL.revokeObjectURL(u); res(i); };
-    i.onerror = () => rej(new Error("Não foi possível ler a imagem."));
-    i.src = u;
-  });
-}
-async function toBlob(file, max, quality, type) {
-  const img = await loadImage(file);
-  const k = Math.min(1, max / Math.max(img.width, img.height));
-  const c = document.createElement("canvas");
-  c.width = Math.max(1, Math.round(img.width * k));
-  c.height = Math.max(1, Math.round(img.height * k));
-  const ctx = c.getContext("2d");
-  if (type === "image/jpeg") { ctx.fillStyle = "#fff"; ctx.fillRect(0, 0, c.width, c.height); }
-  ctx.drawImage(img, 0, 0, c.width, c.height);
-  return new Promise((res) => c.toBlob(res, type, quality));
-}
-const blobToDataURL = (b) => new Promise((res, rej) => { const r = new FileReader(); r.onload = () => res(r.result); r.onerror = rej; r.readAsDataURL(b); });
-
-// Redimensiona e envia ao Storage. Se o Storage não estiver disponível,
-// grava uma versão menor direto no Firestore (data URL).
-async function uploadImage(file, folder) {
-  if (!file.type.startsWith("image/")) throw new Error("Escolha um arquivo de imagem.");
-  const type = file.type === "image/jpeg" ? "image/jpeg" : "image/webp";
-  const blob = await toBlob(file, 1000, 0.85, type);
-  const ext = (blob.type.split("/")[1] || "jpg").replace("jpeg", "jpg");
-  try {
-    const r = ref(storage, `${folder}/${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`);
-    await uploadBytes(r, blob, { contentType: blob.type });
-    return await getDownloadURL(r);
-  } catch (e) {
-    console.warn("Storage indisponível, usando fallback no Firestore:", e);
-    for (const [max, q] of [[640, 0.7], [480, 0.6], [360, 0.5]]) {
-      const small = await toBlob(file, max, q, type);
-      const url = await blobToDataURL(small);
-      if (url.length <= 300000) { toast("Imagem otimizada e salva."); return url; }
-    }
-    throw new Error("Não foi possível enviar a imagem. Tente uma imagem menor.");
-  }
-}
-async function deleteStoredImage(url) {
-  if (url && url.includes("firebasestorage")) { try { await deleteObject(ref(storage, url)); } catch (e) { /* já removida */ } }
-}
 
 /* ---------- painel ---------- */
 export function initAdmin(store) {
@@ -252,25 +205,35 @@ function start(store, user) {
   }
 
   /* ----- modal: imagem avulsa (logo / destaques) ----- */
+  // Cada imagem fica em seu próprio documento (imagens/<chave>) como texto base64.
+  async function saveSiteImage(key, f) {
+    const pop = savingPopup();
+    try {
+      const url = await compressImage(f, IMG.site);              // ajuste de peso invisível
+      await withTimeout(setDoc(doc(db, "imagens", key), { d: url, at: Date.now() }));
+      await pop.success();
+    } catch (e) { console.error("Salvar imagem:", e); pop.fail(explain(e)); }
+  }
+
   function openImage(key) {
     const label = key === "logo" ? "Logo" : "Imagem do destaque";
     const file = h("input", { type: "file", accept: "image/*", hidden: true });
-    const info = h("p", { class: "ed-note" }, "Envie uma imagem (JPG, PNG ou WebP). Ela é redimensionada automaticamente.");
-    file.addEventListener("change", async () => {
+    const info = h("p", { class: "ed-note" }, "Escolha uma imagem do seu computador ou celular.");
+    file.addEventListener("change", () => {
       const f = file.files[0]; if (!f) return;
-      info.textContent = "Enviando…";
-      try {
-        const url = await uploadImage(f, "site");
-        await setDoc(contentRef(), { images: { [key]: url } }, { merge: true });
-        toast(label + " atualizada.");
-        m.close();
-      } catch (e) { info.textContent = explain(e); }
+      m.close();
+      saveSiteImage(key, f);
     });
     const m = modal(label, h("div", {}, info, file), (close) => [
       btn("Escolher imagem", "primary", () => file.click()),
       btn("Voltar ao padrão", "", async () => {
-        try { await setDoc(contentRef(), { images: { [key]: deleteField() } }, { merge: true }); toast("Imagem padrão restaurada."); close(); }
-        catch (e) { toast(explain(e)); }
+        try {
+          await withTimeout(Promise.all([
+            deleteDoc(doc(db, "imagens", key)),
+            setDoc(contentRef(), { images: { [key]: deleteField() } }, { merge: true })
+          ]));
+          toast("Imagem padrão restaurada."); close();
+        } catch (e) { toast(explain(e)); }
       }),
       btn("Cancelar", "ghost", close)
     ]);
@@ -284,6 +247,7 @@ function start(store, user) {
     const p = id ? store.products.find((x) => x.id === id) : { n: "", c: "", v: "", t: BASE_CATS[0], s: "", photo: "", ordem: nextOrder(store.products) };
     if (!p) return toast("Módulo não encontrado.");
     let photo = p.photo || "";
+    let photoChanged = false;
 
     const fN = h("input", { type: "text", value: p.n, placeholder: "Ex.: Módulo ABS 4 canais" });
     const fC = h("input", { type: "text", value: p.c, placeholder: "Ex.: MC-ABS-1042" });
@@ -302,15 +266,15 @@ function start(store, user) {
     let busy = false, saveBtn;
     file.addEventListener("change", async () => {
       const f = file.files[0]; if (!f) return;
-      busy = true; saveBtn.disabled = true; photoNote.textContent = "Enviando foto…";
-      try { photo = await uploadImage(f, "produtos"); setPrev(); photoNote.textContent = "Foto enviada."; }
+      busy = true; saveBtn.disabled = true; photoNote.textContent = "Preparando foto…";
+      try { photo = await compressImage(f, IMG.product); photoChanged = true; setPrev(); photoNote.textContent = "Foto pronta. Clique em “Salvar módulo” para gravar."; }
       catch (e) { photoNote.textContent = explain(e); }
       finally { busy = false; saveBtn.disabled = false; file.value = ""; }
     });
 
     const body = h("div", { class: "ed-form" },
       h("div", { class: "ed-photo" }, prev,
-        h("div", {}, btn("Escolher foto", "", () => file.click()), btn("Remover foto", "ghost", () => { photo = ""; setPrev(); }), file, photoNote)),
+        h("div", {}, btn("Escolher foto", "", () => file.click()), btn("Remover foto", "ghost", () => { photo = ""; photoChanged = false; setPrev(); photoNote.textContent = "Clique em “Salvar módulo” para confirmar."; }), file, photoNote)),
       field("Nome", fN), field("Código", fC), field("Veículos compatíveis", fV),
       field("Categoria", fT), dl, field("Busca (extra)", fS),
       field("Posição na lista", fO, "Número menor aparece primeiro."));
@@ -320,17 +284,18 @@ function start(store, user) {
         if (busy) return;
         if (!fN.value.trim()) { fN.focus(); return toast("Informe o nome do módulo."); }
         const data = { n: fN.value.trim(), c: fC.value.trim(), v: fV.value.trim(), t: fT.value.trim() || "Outros", s: fS.value.trim(), photo, ordem: Number(fO.value) || 0 };
+        const pop = photoChanged && photo ? savingPopup() : null;   // pop-up só quando há foto nova
         try {
           const r = id ? doc(db, "produtos", id) : doc(collection(db, "produtos"));
-          await setDoc(r, data, { merge: true });
-          if (id && p.photo && p.photo !== photo) deleteStoredImage(p.photo);
-          toast("Módulo salvo."); close();
-        } catch (e) { toast(explain(e)); }
+          await withTimeout(setDoc(r, data, { merge: true }));
+          close();
+          if (pop) await pop.success(); else toast("Módulo salvo.");
+        } catch (e) { console.error("Salvar módulo:", e); if (pop) pop.fail(explain(e)); else toast(explain(e)); }
       });
       const acts = [saveBtn, btn("Cancelar", "ghost", close)];
       if (id) acts.push(btn("Excluir", "danger", async () => {
         if (!(await askConfirm("Excluir módulo", `Excluir "${p.n}"? Essa ação não pode ser desfeita.`))) return;
-        try { await deleteDoc(doc(db, "produtos", id)); deleteStoredImage(p.photo); toast("Módulo excluído."); close(); }
+        try { await deleteDoc(doc(db, "produtos", id)); toast("Módulo excluído."); close(); }
         catch (e) { toast(explain(e)); }
       }));
       return acts;
