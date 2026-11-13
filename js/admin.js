@@ -30,9 +30,19 @@ function toast(msg) {
   setTimeout(() => t.remove(), 4200);
 }
 function explain(e) {
-  if (e && e.code === "permission-denied") return "Sem permissão para gravar. Confira as regras do Firestore/Storage e o UID do administrador (veja o README).";
-  if (e && e.code === "unavailable") return "Sem conexão com o Firebase. Tente novamente.";
+  if (e && e.code === "permission-denied") return "Sem permissão para salvar. Saia e entre novamente como administrador.";
+  if (e && e.code === "unavailable") return "Sem conexão. Tente novamente.";
   return (e && e.message) || "Erro inesperado.";
+}
+
+// Confirmação no estilo do site (substitui a janela padrão do navegador).
+function askConfirm(title, text, okLabel = "Excluir") {
+  return new Promise((resolve) => {
+    modal(title, h("p", { class: "ed-note" }, text), (close) => [
+      btn(okLabel, "primary", () => { close(); resolve(true); }),
+      btn("Cancelar", "ghost", () => { close(); resolve(false); })
+    ]);
+  });
 }
 
 function modal(title, content, buttons) {
@@ -86,9 +96,9 @@ async function uploadImage(file, folder) {
     for (const [max, q] of [[640, 0.7], [480, 0.6], [360, 0.5]]) {
       const small = await toBlob(file, max, q, type);
       const url = await blobToDataURL(small);
-      if (url.length <= 300000) { toast("Storage indisponível: imagem reduzida e salva no banco de dados."); return url; }
+      if (url.length <= 300000) { toast("Imagem otimizada e salva."); return url; }
     }
-    throw new Error("Não foi possível enviar a imagem. Ative o Firebase Storage (veja o README).");
+    throw new Error("Não foi possível enviar a imagem. Tente uma imagem menor.");
   }
 }
 async function deleteStoredImage(url) {
@@ -205,13 +215,13 @@ function start(store, user) {
     if (e.target.closest("#grid .card.add")) return openProduct(null);
     const card = e.target.closest("#grid .card");
     if (card) {
-      if (!card.dataset.id) { if (await ensureSeeded()) toast("Catálogo importado. Clique no módulo novamente para editar."); return; }
+      if (!card.dataset.id) { if (await ensureSeeded()) toast("Pronto! Clique novamente para editar."); return; }
       return openProduct(card.dataset.id);
     }
     if (e.target.closest(".rev.add")) return openReview(null);
     const rev = e.target.closest(".rev");
     if (rev) {
-      if (!rev.dataset.id) { if (await ensureSeeded()) toast("Dados importados. Clique na avaliação novamente para editar."); return; }
+      if (!rev.dataset.id) { if (await ensureSeeded()) toast("Pronto! Clique novamente para editar."); return; }
       return openReview(rev.dataset.id);
     }
   }, true);
@@ -223,20 +233,18 @@ function start(store, user) {
     seedAsked = true;
     setTimeout(async () => {
       if (store.content.seeded) return;
-      if (confirm("Para editar módulos e avaliações, preciso importar o catálogo inicial para o Firebase (isso não apaga nada). Importar agora?")) await ensureSeeded();
+      await ensureSeeded(); // importação automática e silenciosa
     }, 300);
   }
   async function ensureSeeded() {
     if (store.content.seeded) return true;
-    if (!store.loaded.content) { toast("Aguarde o carregamento do banco de dados."); return false; }
-    if (!confirm("Importar o catálogo inicial para o Firebase para poder editar?")) return false;
+    if (!store.loaded.content) { toast("Aguarde um instante e tente novamente."); return false; }
     try {
       const b = writeBatch(db);
       DEF_PRODUCTS.forEach((p, i) => b.set(doc(collection(db, "produtos")), { n: p.n, c: p.c, v: p.v, t: p.t, s: p.s, photo: "", ordem: i }));
       DEF_REVIEWS.forEach((r, i) => b.set(doc(collection(db, "avaliacoes")), { t: r[0], n: r[1], r: r[2], ordem: i }));
       b.set(contentRef(), { seeded: true, whatsapp: store.content.whatsapp, phoneDisplay: store.content.phoneDisplay }, { merge: true });
       await b.commit();
-      toast("Catálogo inicial importado.");
       return true;
     } catch (e) { toast(explain(e)); return false; }
   }
@@ -319,7 +327,7 @@ function start(store, user) {
       });
       const acts = [saveBtn, btn("Cancelar", "ghost", close)];
       if (id) acts.push(btn("Excluir", "danger", async () => {
-        if (!confirm(`Excluir "${p.n}"? Essa ação não pode ser desfeita.`)) return;
+        if (!(await askConfirm("Excluir módulo", `Excluir "${p.n}"? Essa ação não pode ser desfeita.`))) return;
         try { await deleteDoc(doc(db, "produtos", id)); deleteStoredImage(p.photo); toast("Módulo excluído."); close(); }
         catch (e) { toast(explain(e)); }
       }));
@@ -351,7 +359,7 @@ function start(store, user) {
           btn("Cancelar", "ghost", close)
         ];
         if (id) acts.push(btn("Excluir", "danger", async () => {
-          if (!confirm("Excluir esta avaliação?")) return;
+          if (!(await askConfirm("Excluir avaliação", "Excluir esta avaliação? Essa ação não pode ser desfeita."))) return;
           try { await deleteDoc(doc(db, "avaliacoes", id)); toast("Avaliação excluída."); close(); } catch (e) { toast(explain(e)); }
         }));
         return acts;
