@@ -77,6 +77,8 @@ $("lgGoogle").addEventListener("click", async () => {
   try {
     const provider = new GoogleAuthProvider();
     provider.setCustomParameters({ prompt: "select_account" });
+    // pequena pausa: evita que um toque duplo caia dentro da janela do Google
+    await new Promise((r) => setTimeout(r, 500));
     const cred = await signInWithPopup(auth, provider);
     if (!userOk(cred.user)) {
       await signOut(auth);
