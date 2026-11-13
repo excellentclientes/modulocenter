@@ -174,6 +174,7 @@ function start(store, user) {
       if (!el.hasAttribute("contenteditable")) { el.setAttribute("contenteditable", "true"); el.setAttribute("spellcheck", "false"); }
     });
     document.querySelectorAll("[data-img]").forEach((el) => el.setAttribute("title", "Clique para trocar a imagem"));
+    document.querySelectorAll("#phoneNum, #copyPhone").forEach((el) => el.setAttribute("title", "Clique para alterar o número"));
     checkSeed();
   }
   document.addEventListener("focusin", (e) => {
@@ -210,6 +211,7 @@ function start(store, user) {
   document.addEventListener("click", async (e) => {
     if (e.target.closest(".ed-bar, .ed-ov, .ed-toast")) return;
     if (e.target.closest("a, button")) e.preventDefault();   // desativa links/botões do site no modo de edição
+    if (e.target.closest("#phoneNum, #copyPhone")) { e.stopPropagation(); return openSettings(); }  // número do rodapé abre as configurações
     const imgEl = e.target.closest("[data-img]");
     if (imgEl) return openImage(imgEl.dataset.img);
     if (e.target.closest("#grid .card.add")) return openProduct(null);
