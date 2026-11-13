@@ -16,7 +16,7 @@ const ERR = {
   "auth/popup-blocked": "O navegador bloqueou a janela do Google. Libere pop-ups para este site e tente de novo.",
   "auth/network-request-failed": "Sem conexão. Verifique sua internet.",
   "auth/operation-not-allowed": "O login com Google não está ativado no Firebase (Authentication → Método de login).",
-  "auth/unauthorized-domain": "Este domínio não está autorizado no Firebase Authentication."
+  "auth/unauthorized-domain": "Acesso não autorizado."
 };
 
 /* ---------- modal ---------- */
@@ -81,7 +81,7 @@ $("lgGoogle").addEventListener("click", async () => {
     if (!userOk(cred.user)) {
       await signOut(auth);
       currentUser = null;
-      msg("Esta conta Google não tem permissão de acesso.");
+      msg("Acesso não autorizado.");
       idle();
       return;
     }
@@ -89,6 +89,7 @@ $("lgGoogle").addEventListener("click", async () => {
     idle();
     enterEditMode();
   } catch (err) {
+    console.error("Login Google:", err.code || err);
     msg(ERR[err.code] || "Não foi possível entrar (" + (err.code || err.message) + ").");
     idle();
   }
